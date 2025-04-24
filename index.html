@@ -1,0 +1,450 @@
+<!-- FONTS TO USE https://www.w3schools.com/cssref/css_websafe_fonts.php--> 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift-Reduce-Parser</title>
+    
+    <style>
+        /* Base styles for the page */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #551666;
+            color: #333;
+        }
+        /* Main container for all content */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        /* Card styling for all major sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #461D7C;
+        }
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            transform: translateY(-10px);
+        }
+        /* LSU header styling */
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #461D7C;
+            padding-bottom: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            color: #461D7C; /* LSU purple */
+            font-size: 36px;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .header p {
+            margin: 8px 0 0;
+            color: #FDD023; /* LSU gold */
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+        }
+        /* Style for the grammar rules box */
+        .grammar {
+            background-color: #f8f9fa;
+            border-left-color: #6c757d;
+        }
+        .grammar h2 {
+            margin-top: 0;
+            color: #343a40;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .grammar ol {
+            padding-left: 25px;
+        }
+        .grammar li {
+            padding: 5px 0;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+        /* Style for the input section */
+        .input-section {
+            border-left-color: #28a745;
+        }
+        .input-section h2 {
+            margin-top: 0;
+            color: #343a40;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .input-section ul {
+            background-color: #f8f9fa;
+            padding: 15px 15px 15px 35px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .input-section li {
+            padding: 3px 0;
+        }
+        /* Style for the input textarea */
+        textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            height: 100px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        textarea:focus {
+            border-color: #461D7C;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(70, 29, 124, 0.2);
+            background-color: white;
+        }
+        /* Style for the parse button */
+        button {
+            background-color: #461D7C;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #3a1866;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        /* Style for the parsing steps table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #461D7C;
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        td {
+            border-top: none;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+        }
+        /* Success message style */
+        .success {
+            color: #155724;
+            font-weight: bold;
+            padding: 12px 15px;
+            background-color: #d4edda;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        /* Error message style */
+        .error {
+            color: #721c24;
+            font-weight: bold;
+            padding: 12px 15px;
+            background-color: #f8d7da;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        /* Style for the examples section */
+        .examples {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        /* Style for the example buttons */
+        .example-btn {
+            background-color: #f8f9fa;
+            color: #343a40;
+            border: 1px solid #ced4da;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .example-btn:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Highlight the action column to make it more readable */
+        td:last-child {
+            font-weight: 600;
+        }
+        /* Highlight the rule applications with a blue color */
+        tr td:last-child {
+            color: #8000b3;
+        }
+        /* Highlight accepted state with green */
+        tr td:last-child:contains("Accept") {
+            color: #28a745;
+            font-weight: 600;
+        }
+        /* Highlight error state with red */
+        tr td:last-child:contains("error") {
+            color: #dc3545;
+        }
+        /* Output section */
+        #output {
+            border-left-color: #fffb00;
+        }
+        #output h2 {
+            margin-top: 0;
+            color: #343a40;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Dark mode toggle switch styling */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        .theme-switch-wrapper span {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .theme-switch {
+            display: inline-block;
+            height: 26px;
+            position: relative;
+            width: 50px;
+        }
+        .theme-switch input {
+            display: none;
+        }
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 18px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 18px;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #461D7C;
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #222;
+            color: #eee;
+        }
+        body.dark-mode .container {
+            background-color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        body.dark-mode .card {
+            background-color: #444;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left-color: #FDD023;
+        }
+        body.dark-mode .header {
+            border-bottom-color: #FDD023;
+        }
+        body.dark-mode .header h1 {
+            color: #8a65c7; /* Lighter purple for dark mode */
+        }
+        body.dark-mode .header p {
+            color: #FDD023;
+        }
+        body.dark-mode .grammar,
+        body.dark-mode .input-section ul {
+            background-color: #3a3a3a;
+        }
+        body.dark-mode h2 {
+            color: #eee;
+            border-bottom-color: #555;
+        }
+        body.dark-mode textarea {
+            background-color: #3a3a3a;
+            color: #eee;
+            border-color: #555;
+        }
+        body.dark-mode textarea:focus {
+            border-color: #8a65c7;
+            box-shadow: 0 0 0 3px rgba(138, 101, 199, 0.2);
+        }
+        body.dark-mode table {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        body.dark-mode th {
+            background-color: #461D7C;
+        }
+        body.dark-mode tr:nth-child(even) {
+            background-color: #3a3a3a;
+        }
+        body.dark-mode tr:hover {
+            background-color: #555;
+        }
+        body.dark-mode td {
+            border-bottom-color: #555;
+            border-left-color: #555;
+            border-right-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark mode switch -->
+    <div class="theme-switch-wrapper">
+        <span>Light</span>
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider"></div>
+        </label>
+        <span>Dark</span>
+    </div>
+
+    <!-- Main container for all UI elements -->
+    <div class="container">
+        <!-- Header with LSU colors -->
+        <div class="header">
+            <h1>Shift-Reduce-Parser</h1>
+            <p>Louisiana State University - CSC 4101 Anas Mahmoud</p>
+            <p> Author: sauzen4@lsu.edu</p>
+        </div>
+        
+        <!-- Grammar rules display -->
+        <div class="grammar card">
+            <h2>Grammar Rules:</h2>
+            <ol>
+                <li>E → E + T</li>
+                <li>E → T</li>
+                <li>T → T * F</li>
+                <li>T → F</li>
+                <li>F → (E)</li>
+                <li>F → id</li>
+            </ol>
+        </div>
+
+        <!-- Input section with instructions and textarea -->
+        <div class="input-section card">
+            <h2>Input Format</h2>
+            <p>Please follow these rules:</p>
+            <ul>
+                <li>Use 'id' for all variables and numbers</li>
+                <li>Separate all tokens with spaces</li>
+                <li>Valid tokens: id, +, *, (, )</li>
+            </ul>
+            
+            <!-- Input textarea for user expressions -->
+            <textarea id="input" placeholder="Enter your expression (e.x., id + id * id)"></textarea>
+            <button onclick="parse()">Parse Expression</button>
+        </div>
+
+        <!-- Output section for parsing results -->
+        <div id="output" class="card">
+            <h2>Parsing Steps</h2>
+            <!-- Results will be displayed here dynamically -->
+            <div id="result"></div>
+        </div>
+    </div>
+    
+    <!-- Include the parser implementation -->
+    <script src="parser.js"></script>
+    
+    <!-- Dark mode toggle -->
+    <script>
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }    
+        }
+        
+        // Event listener for theme switch
+        toggleSwitch.addEventListener('change', switchTheme, false);
+        
+        // Check for saved user preference
+        const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+        
+        if (currentTheme) {
+            document.body.classList.toggle('dark-mode', currentTheme === 'dark');
+            toggleSwitch.checked = currentTheme === 'dark';
+        }
+    </script>
+</body>
+</html>
