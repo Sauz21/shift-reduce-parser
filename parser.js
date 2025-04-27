@@ -112,7 +112,7 @@ class Parser {
             var actionDisplay = 'error';
             if (action) {
                 if (action === 'acc') {
-                    actionDisplay = 'Accept';
+                    actionDisplay = 'Completed';
                 } else if (action[0] === 's') {
                     actionDisplay = "Shift " + action.slice(1);
                 } else if (action[0] === 'r') {
