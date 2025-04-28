@@ -5,11 +5,17 @@ class Parser {
     constructor() {
         // Provided grammer rules
         this.rules = [
+            //E=E+T
             { id: 1, lhs: 'E', rhs: ['E', '+', 'T'] },  // Rule 1
+            //E=T
             { id: 2, lhs: 'E', rhs: ['T'] },            // Rule 2
+            //T=T*F
             { id: 3, lhs: 'T', rhs: ['T', '*', 'F'] },  // Rule 3
+            //T=F
             { id: 4, lhs: 'T', rhs: ['F'] },            // Rule 4
+            //F=(E)
             { id: 5, lhs: 'F', rhs: ['(', 'E', ')'] },  // Rule 5
+            //F=id
             { id: 6, lhs: 'F', rhs: ['id'] }            // Rule 6
         ];
 
@@ -59,6 +65,7 @@ class Parser {
         var invalidTokens = [];
         
         // Loop to find invalid tokens
+        // If the word is not blank and not in the list of allowed words (validTokens) = invalid token
         var inputTokens = input.split(/\s+/);
         for (var j = 0; j < inputTokens.length; j++) {
             var token = inputTokens[j];
@@ -75,7 +82,7 @@ class Parser {
             };
         }
 
-        // Split the input into tokens and add $ at the end
+        // Split the input into tokens and add $ at the end ($ represents the end of input)
         var tokens = [];
         for (var j = 0; j < inputTokens.length; j++) {
             if (inputTokens[j] !== '') {
@@ -94,12 +101,12 @@ class Parser {
         // Position in the token array
         var i = 0;
         
-        // Array to store parsing steps
+        // Array that store parsing steps
         var steps = [];
 
         // Main parsing loop
         while (true) {
-            // Get current state from top of stack
+            // Gets the current state from top of stack
             var s = stack[stack.length - 1];
             
             // Get action from table
@@ -109,6 +116,7 @@ class Parser {
             }
 
             // Format the action for display
+            //TODOTODO
             var actionDisplay = 'error';
             if (action) {
                 if (action === 'acc') {
@@ -125,7 +133,16 @@ class Parser {
             // Save this step
             var stackStr = '';
             for (var j = 0; j < stack.length; j++) {
-                stackStr += stack[j] + ' ';
+                if (j > 0 && j % 2 === 1) {
+                    // Add arrow after each state number, before symbol
+                    stackStr += "<span class='arrow'>→</span> " + stack[j] + " ";
+                } else if (j > 0 && j % 2 === 0) {
+                    // Add arrow after each symbol, before state
+                    stackStr += "<span class='arrow'>→</span> " + stack[j] + " ";
+                } else {
+                    // First element (state 0)
+                    stackStr += stack[j] + " ";
+                }
             }
             stackStr = stackStr.trim();
             
@@ -201,9 +218,9 @@ class Parser {
     }
 }
 
-// This function gets called when the Parse button is clicked
+// Called when the Parse button is clicked
 function parse() {
-    // Get the input from the text area
+    // Text area input
     var input = document.getElementById('input').value.trim();
     
     // Create a new parser
@@ -218,7 +235,16 @@ function parse() {
     // Add each step to the table
     for (var i = 0; i < result.steps.length; i++) {
         var step = result.steps[i];
-        html += '<tr><td>' + step.step + '</td><td>' + step.stack + '</td><td>' + step.input + '</td><td>' + step.action + '</td></tr>';
+        
+        // Apply highlighting to action column
+        var actionClass = '';
+        if (step.action.includes('Completed')) {
+            actionClass = 'style="color: #28a745; font-weight: 600;"';
+        } else if (step.action.includes('error')) {
+            actionClass = 'style="color: #dc3545;"';
+        }
+        
+        html += '<tr><td>' + step.step + '</td><td>' + step.stack + '</td><td>' + step.input + '</td><td ' + actionClass + '>' + step.action + '</td></tr>';
     }
     
     html += '</tbody></table>';
