@@ -13,6 +13,12 @@ This parser takes expressions with operations (like id + id * id) and checks if 
 5. F → (E)
 6. F → id
 
+## Accepted Tokens
+1. id
+2. +
+3. *
+4. (,)
+
 ## How to use it
 
 1. Type an expression in the box (remember to use 'id' for variables and separate everything with spaces)
