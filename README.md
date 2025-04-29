@@ -32,6 +32,7 @@ The parser shows:
 - What's on the stack
 - What input is left to process
 - What action it taking (shift/reduce/accept)
+- Errors
 
 ## Project files
 
