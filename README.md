@@ -14,10 +14,10 @@ This parser takes expressions with operations (like id + id * id) and checks if 
 6. F → id
 
 ## Accepted Tokens
-1. id
-2. +
-3. *
-4. (,)
+1. ( id )
+2. ( + )
+3. ( * )
+4. ( , )
 
 ## How to use it
 
