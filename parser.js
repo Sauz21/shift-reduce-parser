@@ -62,7 +62,7 @@ class Parser {
         
         // Check if the tokens are valid
         var validTokens = ['id', '+', '*', '(', ')', ' '];
-        var invalidTokens = [];
+        var invalidTokens = []; // I nvalid token storage 
         
         // Loop to find invalid tokens
         // If the word is not blank and not in the list of allowed words (validTokens) = invalid token
